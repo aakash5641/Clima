@@ -28,14 +28,23 @@ class _LocationScreenState extends State<LocationScreen> {
 
   void updateUI(dynamic weatherData) {
     setState(() {
-      double temp = weatherData['main']['temp'];
-      temperature = temp.toInt();
-      weatherMessage = weather.getMessage(temperature);
+      //there can be some corner cases when the user device may not give location
+      // in that situation our app may got crashed, so to avoid that situation we have putted condition 
+      //that if weather data is null then give custom message to the user else show the particular data related to it
+      if (weatherData == null) {
+        temperature = 0;
+        weatherIcon = 'Error';
+        weatherMessage = 'Unable to fetch the weather';
+        cityName = '';
+      } else {
+        double temp = weatherData['main']['temp'];
+        temperature = temp.toInt();
+        weatherMessage = weather.getMessage(temperature);
 
-      var condition = weatherData['weather'][0]['id'];
-      weatherIcon = weather.getWeatherIcon(condition);
-      cityName = weatherData['name'];
-      print(temperature);
+        var condition = weatherData['weather'][0]['id'];
+        weatherIcon = weather.getWeatherIcon(condition);
+        cityName = weatherData['name'];
+      }
     });
   }
 
@@ -61,7 +70,10 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weather.getLocationWeather();
+                      updateUI(weatherData);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
