@@ -3,12 +3,18 @@ import 'package:clima/services/networking.dart';
 
 const apiKey = 'b5b35cc724bf35f0ae3ce2d132b46d4f';
 //all the part of the api before ? can be made constant to refactor the link
-const openWeatherMapURl='https://api.openweathermap.org/data/2.5/weather';
+const openWeatherMapURl = 'https://api.openweathermap.org/data/2.5/weather';
 
 class WeatherModel {
+  Future<dynamic> getCityWeather(String cityName) async {
+    var url = '$openWeatherMapURl?q=$cityName&appid=$apiKey&units=metric';
+    NetworkHelper networkHelper = NetworkHelper(url: url);
+    var weatherData = await networkHelper.getData();
+    return weatherData;
+  }
 
   //this method will process the location and the location related weather data for the user
- Future<dynamic> getLocationWeather() async {
+  Future<dynamic> getLocationWeather() async {
     Location location = Location();
     await location.getCurrentLocation();
 
